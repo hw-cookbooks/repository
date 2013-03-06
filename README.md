@@ -84,6 +84,7 @@ Encrypted data bags will use the default secret for decryption.
   "private": "PRIVATE KEY CONTENTS",
   "public": "PUBLIC KEY CONTENTS"
 }
+```
 
 ## Infos
 * Repo: https://github.com/hw-cookbooks/repository
