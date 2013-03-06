@@ -1,0 +1,23 @@
+<VirtualHost *:<%= node[:repository][:frontend][:listen_port] %>>
+  ServerAdmin <%= node[:repository][:pgp][:email] %>
+  ServerName <%= node[:repository][:frontend][:fqdn] %>
+  ServerAlias <%= node[:hostname] %> <%= node[:fqdn] %>
+
+  DocumentRoot <%= node[:repository][:base] %>
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+
+  <Directory <%= node[:repository][:base] %>>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  LogLevel warn
+  ErrorLog /var/log/apache2/repository-error.log 
+  CustomLog /var/log/apache2/repository-access.log combined
+  ServerSignature On
+</VirtualHost>

@@ -1,0 +1,23 @@
+Origin: <%= node[:ipaddress] %>
+Label: <%= @label %>
+Date: <%= Time.now.rfc2822 %>
+<% if @components -%>
+Components: <%= @components.join(' ') %>
+<% else -%>
+Component: <%= @component %>
+<% end -%>
+<% if @codename -%>
+Codename: <%= @codename %>
+<% end -%>
+<% if @archs -%>
+Architectures: <%= @archs.join(' ') %>
+<% else -%>
+Architecture: <%= @arch %>
+<% end -%>
+Description: <%= @description %>
+<% if @files && @files = @files.call -%>
+<% @files.each do |kind, files| -%>
+<%= kind %>:
+ <%= files.join("\n ") %>
+<% end -%>
+<% end -%>
