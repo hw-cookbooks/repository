@@ -1,3 +1,4 @@
+include_recipe 'apt'
 include_recipe 'apache2'
 
 apache_site '000-default' do

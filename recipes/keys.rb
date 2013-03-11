@@ -20,14 +20,11 @@ if(node[:repository][:pgp_data_bag])
     not_if "GNUPGHOME=\"#{node[:repository][:gnupg_home]}\" gpg --list-secret-keys --fingerprint #{pgp_bag[:email]} | egrep -qx '.*Key fingerprint = #{pgp_bag[:fingerprint]}'"
   end
 
-  template pgp_key do
-    source 'pgp_key.erb'
+  file key_path do
     mode 0644
     owner 'nobody'
     group 'nogroup'
-    variables(
-      :pgp_public => pgp_bag[:public]
-    )
+    content pgp_bag[:public]
   end
 else
   include_recipe 'gpg'
