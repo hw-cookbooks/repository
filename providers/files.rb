@@ -93,7 +93,7 @@ action :build do
   end
   
   execute "Release.gpg - #{new_resource.codename}" do
-    command "gpg -ba #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'Release.gpg')}"
+    command "sudo -i gpg -ba #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'Release.gpg')}"
     action :nothing
     user "root"
     cwd "/root"
@@ -104,7 +104,7 @@ action :build do
   end
 
   execute "InRelease - #{new_resource.codename}" do
-    command "gpg --clearsign #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'InRelease')}"
+    command "sudo -i gpg --clearsign #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'InRelease')}"
     action :nothing
     user "root"
     cwd "/root"

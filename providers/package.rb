@@ -21,7 +21,7 @@ action :add do
     unless(node[:repository][:do_not_sign])
       begin
         cmd = Mixlib::ShellOut.new(
-          "debsigs --sign=origin #{pool_file}",
+          "sudo -i debsigs --sign=origin #{pool_file}",
           user: "root",
           cwd: "/root",
           environment: {

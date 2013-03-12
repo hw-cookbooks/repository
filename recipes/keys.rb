@@ -17,7 +17,7 @@ if(node[:repository][:pgp_data_bag])
     user 'root'
     cwd '/root'
     environment 'GNUPGHOME' => node[:repository][:gnupg_home]
-    not_if "GNUPGHOME=\"#{node[:repository][:gnupg_home]}\" gpg --list-secret-keys --fingerprint #{pgp_bag[:email]} | egrep -qx '.*Key fingerprint = #{pgp_bag[:fingerprint]}'"
+    not_if "sudo -i GNUPGHOME=\"#{node[:repository][:gnupg_home]}\" gpg --list-secret-keys --fingerprint #{pgp_bag[:email]} | egrep -qx '.*Key fingerprint = #{pgp_bag[:fingerprint]}'"
   end
 
   file key_path do

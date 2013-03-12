@@ -7,7 +7,7 @@ ruby_block 'repository[locals]' do
     e_key.command "apt-key add #{key_file}"
     e_key.not_if do
       installed_ids = %x{apt-key finger}.split("\n").find_all{|s| s.include?('Key finger') }.map(&:strip).sort
-      key_ids = %x{gpg --with-fingerprint #{key_file}}.split("\n").find_all{|s| s.include?('Key finger') }.map(&:strip).sort
+      key_ids = %x{sudo -i gpg --with-fingerprint #{key_file}}.split("\n").find_all{|s| s.include?('Key finger') }.map(&:strip).sort
       (installed_ids & key_ids).sort == key_ids.sort
     end
     e_key.run_action(:run)
