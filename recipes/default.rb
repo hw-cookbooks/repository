@@ -21,4 +21,9 @@ end
   include_recipe "repository::#{recipe}"
 end
 
+template File.join(node[:apache][:dir], '/sites-available/repository.conf') do
+  source 'repository.conf.erb'
+  mode 0644
+end
+
 apache_site 'repository.conf'
