@@ -95,6 +95,9 @@ action :build do
   execute "Release.gpg - #{new_resource.codename}" do
     command "gpg -ba #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'Release.gpg')}"
     action :nothing
+    user "root"
+    cwd "/root"
+    environment "GNUPGHOME" => node['repository']['gnupg_home']
     not_if do
       node[:repository][:do_not_sign]
     end
@@ -103,6 +106,9 @@ action :build do
   execute "InRelease - #{new_resource.codename}" do
     command "gpg --clearsign #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'InRelease')}"
     action :nothing
+    user "root"
+    cwd "/root"
+    environment "GNUPGHOME" => node['repository']['gnupg_home']
     not_if do
       node[:repository][:do_not_sign]
     end
