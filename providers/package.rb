@@ -19,7 +19,17 @@ action :add do
   unless(::File.exists?(pool_file))
     FileUtils.cp(new_resource.path, pool_file)
     unless(node[:repository][:do_not_sign])
-      unless(system("debsigs --sign=origin #{pool_file}"))
+      begin
+        cmd = Mixlib::ShellOut.new(
+          "debsigs --sign=origin #{pool_file}",
+          user: "root",
+          cwd: "/root",
+          environment: {
+            "GNUPGHOME" => node['repository']['gnupg_home']
+          })
+        cmd.run_command
+        cmd.error!
+      rescue Errno::EACCESS, Errno::ENOENT, Mixlib::ShellOut::CommandTimeout
         raise "Failed to sign package: #{pool_file}"
       end
     end
