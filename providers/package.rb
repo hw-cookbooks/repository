@@ -22,11 +22,12 @@ action :add do
       begin
         cmd = Mixlib::ShellOut.new(
           "sudo -i debsigs --sign=origin #{pool_file}",
-          user: "root",
-          cwd: "/root",
+          user: 'root',
+          cwd: '/root',
           environment: {
-            "GNUPGHOME" => node['repository']['gnupg_home']
-          })
+            'GNUPGHOME' => node[:repository][:gnupg_home]
+          }
+        )
         cmd.run_command
         cmd.error!
       rescue Errno::EACCESS, Errno::ENOENT, Mixlib::ShellOut::CommandTimeout
