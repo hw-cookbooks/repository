@@ -7,4 +7,4 @@ description 'Build package repositories'
 
 depends 'apache2'
 depends 'apt'
-depends 'gpg'
+depends 'gpg', '>= 0.2.2'
