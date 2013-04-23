@@ -1,3 +1,6 @@
+## v0.1.4
+* Force minimum dependency on `gpg` cookbook
+
 ## v0.1.2
 * Ensure apache configuration is properly enabled
 * Add mixlib shellout usage in place of directly shelling
