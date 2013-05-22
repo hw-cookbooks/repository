@@ -81,7 +81,7 @@ action :build do
     # TODO: Replace files with #lazy for chef11 and add delayed evaluator cookbook
     # for chef10
     variables(
-      :components => config.keys,
+      :components => config[:components].keys,
       :codename => new_resource.codename,
       :archs => processed_archs.uniq,
       :files => lambda{ RepositoryHelper.generate_checksums(dist_dir) },
