@@ -14,15 +14,18 @@ end
 
 local_repos = []
 
+valid_attributes = %w(
+  type component codename architecture
+  label description component_label
+   component_description multi_version
+)
+
 repos.each do |rc|
   repository rc[:name] do
-    codename rc[:codename]
-    architecture rc[:architecture]
-    label rc[:label]
-    description rc[:description]
-    component_label rc[:component_label]
-    component_description rc[:component_description]
-    multi_version rc[:multi_version] unless rc[:multi_version].nil?
+    rc.each do |key, value|
+      next unless valid_attributes.include?(key.to_s)
+      self.send(key, value)
+    end
   end
   local_repos << rc[:name] if rc[:enable_locally]
 end
