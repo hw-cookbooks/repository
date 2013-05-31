@@ -1,5 +1,5 @@
 name 'repository'
-version '0.1.5'
+version '0.1.6'
 maintainer 'Chris Roberts'
 maintainer_email 'chrisroberts.code@gmail.com'
 license 'Apache 2.0'

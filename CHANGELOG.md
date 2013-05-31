@@ -1,3 +1,7 @@
+## v0.1.6
+* Allow all valid attributes for dynamic repositories
+* Update run state data hash for proper component access
+
 ## v0.1.4
 * Force minimum dependency on `gpg` cookbook
 
