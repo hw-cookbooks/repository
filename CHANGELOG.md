@@ -1,3 +1,6 @@
+## v0.1.8
+* Update access to fqdn within default attributes
+
 ## v0.1.6
 * Allow all valid attributes for dynamic repositories
 * Update run state data hash for proper component access
