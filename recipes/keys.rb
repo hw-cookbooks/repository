@@ -12,12 +12,20 @@ if(node[:repository][:pgp_data_bag])
 
   node.set[:repository][:pgp][:email] = pgp_bag[:email]
 
-  execute 'Repository: import packaging key' do
-    command "/bin/echo -e '#{pgp_bag[:private]}' | gpg --import -"
-    user 'root'
-    cwd '/root'
-    environment 'GNUPGHOME' => node[:repository][:gnupg_home]
-    not_if "sudo -i GNUPGHOME=\"#{node[:repository][:gnupg_home]}\" gpg --list-secret-keys --fingerprint #{pgp_bag[:email]} | egrep -qx '.*Key fingerprint = #{pgp_bag[:fingerprint]}'"
+  ruby_block 'Repository: import packaging key' do
+    block do
+      require 'tempfile'
+      Tempfile.open('/tmp/') do |file|
+        file.write pgp_bag[:private]
+        file.close
+        cmd = Chef::Resource::Execute.new("sudo -u #{node[:gpg][:user]} -i gpg --import #{file.path}", node.run_context)
+        cmd.action :nothing
+        cmd.cwd '/root'
+        cmd.environment 'GNUPGHOME' => node[:repository][:gnupg_home]
+        cmd.run_action(:run)
+      end
+    end
+    not_if "sudo -u #{node[:gpg][:user]} -i GNUPGHOME=\"#{node[:repository][:gnupg_home]}\" gpg --list-secret-keys --fingerprint #{pgp_bag[:email]} | egrep -qx '.*Key fingerprint = #{pgp_bag[:fingerprint]}'"
   end
 
   file key_path do
