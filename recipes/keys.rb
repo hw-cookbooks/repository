@@ -7,7 +7,7 @@ if(node[:repository][:pgp_data_bag])
     )
   end
   raise 'Failed to locate PGP information' unless pgp_bag
-  pgp_bag = Mash.new(pgp_bag.raw_data)
+#  pgp_bag = Mash.new(pgp_bag.raw_data)
   key_path = File.join(node[:repository][:base], "#{pgp_bag[:email]}.gpg.key")
 
   node.set[:repository][:pgp][:email] = pgp_bag[:email]
