@@ -81,6 +81,7 @@ Encrypted data bags will use the default secret for decryption.
 {
   "id": "pgp",
   "email": "user@example.com",
+  "fingerprint": "KEY FINGERPRINT",
   "private": "PRIVATE KEY CONTENTS",
   "public": "PUBLIC KEY CONTENTS"
 }
