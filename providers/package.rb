@@ -19,9 +19,15 @@ action :add do
   unless(::File.exists?(pool_file))
     FileUtils.cp(new_resource.path, pool_file)
     unless(node[:repository][:do_not_sign])
+      sig_command = [
+        "sudo -i debsigs",
+        "--sign=#{new_resource.signature_type}",
+        "--default-key=#{new_resource.signing_key}" if new_resource.signing_key,
+        "#{pool_file}"
+      ].compact.join(' ')
       begin
         cmd = Mixlib::ShellOut.new(
-          "sudo -i debsigs --sign=origin #{pool_file}",
+          sig_command,
           user: 'root',
           cwd: '/root',
           environment: {
