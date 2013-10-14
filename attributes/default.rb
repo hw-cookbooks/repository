@@ -16,3 +16,4 @@ default[:repository][:install_local_repos] = []
 default[:repository][:frontend][:listen_port] = 80
 default[:repository][:frontend][:fqdn] = node[:fqdn]
 default[:repository][:do_not_sign] = false
+default[:repository][:tmp] = nil # use this to provide custom tmp directory

@@ -13,7 +13,7 @@ action :build do
   end
   stopper.run_action(:stop)
 
-  conf_file = ::File.join(node[:repository][:base], 'conf', "#{new_resource.codename}.json")  
+  conf_file = ::File.join(node[:repository][:base], 'conf', "#{new_resource.codename}.json")
   pool_dir = ::File.join(node[:repository][:base], 'pool', new_resource.codename)
   dist_dir = ::File.join(node[:repository][:base], 'dists', new_resource.codename)
 
@@ -27,7 +27,9 @@ action :build do
     component_vals[:architectures].each do |arch, files_deb|
       processed_archs << arch
       arch_dir = ::File.join(component_dir, "binary-#{arch}")
-      Dir.mktmpdir do |t_dir|
+      tmp_dir = node[:repository][:tmp] || '/tmp/'
+      tmp_dir << '/' unless tmp_dir.end_with?('/')
+      Dir.mktmpdir(tmp_dir) do |t_dir|
         t_arch_dir = ::File.join(t_dir, 'dists', new_resource.codename, component, "binary-#{arch}")
         t_pool_dir = ::File.join(t_dir, 'pool', new_resource.codename)
         deb_path = "pool/#{new_resource.codename}"
@@ -91,7 +93,7 @@ action :build do
     notifies :run, "execute[Release.gpg - #{new_resource.codename}]", :immediately
     notifies :run, "execute[InRelease - #{new_resource.codename}]", :immediately
   end
-  
+
   execute "Release.gpg - #{new_resource.codename}" do
     command "sudo -i gpg -ba #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'Release.gpg')}"
     action :nothing
