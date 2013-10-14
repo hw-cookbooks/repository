@@ -1,12 +1,9 @@
 include_recipe 'apt'
 include_recipe 'apache2'
+include_recipe 'repository/dependencies'
 
 apache_site '000-default' do
   enable false
-end
-
-node[:repository][:packages].each do |pkg|
-  package pkg
 end
 
 directory node[:repository][:base] do

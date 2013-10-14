@@ -1,4 +1,6 @@
 def load_current_resource
+  new_resource.run_context.include_recipe 'repository::dependencies'
+
   node.run_state[:repository_db] ||= Mash.new
   node.run_state[:repository_meta] ||= Mash.new
   new_resource.type new_resource.type.to_sym
