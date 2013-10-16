@@ -19,6 +19,13 @@ ruby_block 'repository[locals]' do
       a_repo.uri "file://#{node[:repository][:base]}"
       a_repo.distribution repo.codename
       a_repo.components [repo.component]
+      a_repo.only_if do
+        File.exists?(
+          File.join(
+            node[:repository][:base], 'conf', "#{repo.codename}.json"
+          )
+        )
+      end
       a_repo.run_action(:add)
     end
   end
