@@ -22,7 +22,7 @@ action :add do
       sig_command = [
         "sudo -i debsigs",
         "--sign=#{new_resource.signature_type}",
-        "--default-key=#{new_resource.signing_key}" if new_resource.signing_key,
+        new_resource.signing_key ? "--default-key=#{new_resource.signing_key}" : nil,
         "#{pool_file}"
       ].compact.join(' ')
       begin
