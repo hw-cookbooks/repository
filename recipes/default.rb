@@ -1,6 +1,6 @@
 include_recipe 'apt'
 include_recipe 'apache2'
-include_recipe 'repository/dependencies'
+include_recipe 'repository::dependencies'
 
 apache_site '000-default' do
   enable false
