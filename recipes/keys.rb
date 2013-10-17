@@ -1,13 +1,14 @@
 if(node[:repository][:pgp_data_bag])
-  if(node[:repository][:pgp_data_bag] == true)
+  case node[:repository][:pgp_data_bag]
+  when TrueClass
     pgp_bag = data_bag_item(node[:repository][:data_bag], 'pgp')
-  else
+  when 'encrypted', :encrypted
     pgp_bag = Chef::EncryptedDataBagItem.load(
       node[:repository][:data_bag], 'pgp'
     )
   end
   raise 'Failed to locate PGP information' unless pgp_bag
-#  pgp_bag = Mash.new(pgp_bag.raw_data)
+  pgp_bag = Mash.new(pgp_bag.to_hash)
   key_path = File.join(node[:repository][:base], "#{pgp_bag[:email]}.gpg.key")
 
   node.set[:repository][:pgp][:email] = pgp_bag[:email]
@@ -36,7 +37,7 @@ if(node[:repository][:pgp_data_bag])
   end
 else
   include_recipe 'gpg'
-  
+
   key_path = File.join(node[:repository][:base], "#{node[:gpg][:name][:email]}.gpg.key")
   node.set[:repository][:pgp][:email] = node[:gpg][:name][:email]
 
