@@ -7,24 +7,24 @@ def load_current_resource
     [new_resource.architecture].flatten.map(&:to_s)
   )
   %w(amd64 i386).each do |arch_check|
-    unless(new_resource.architecture.include?(arch_check))
+    unless new_resource.architecture.include?(arch_check)
       new_resource.architecture.push(arch_check)
       Chef::Log.warn "Apt repository requires #{arch_check} architecture. Automatically added."
     end
   end
   node.run_state[:repository_db][new_resource.codename] ||= Mash.new
   data = Mash.new(
-    :meta => Mash.new(
-      :label => new_resource.label,
-      :description => new_resource.description
+    meta: Mash.new(
+      label: new_resource.label,
+      description: new_resource.description
     ),
-    :components => Mash.new(
+    components: Mash.new(
       new_resource.component => Mash.new(
-        :architectures => Mash.new,
-        :meta => Mash.new(
-          :label => new_resource.component_label || new_resource.label,
-          :description => new_resource.component_description || new_resource.description,
-          :multi_version => new_resource.multi_version
+        architectures: Mash.new,
+        meta: Mash.new(
+          label: new_resource.component_label || new_resource.label,
+          description: new_resource.component_description || new_resource.description,
+          multi_version: new_resource.multi_version
         )
       )
     )
@@ -39,17 +39,17 @@ end
 
 action :create do
   %w(conf dists pool).each do |dir|
-    directory ::File.join(node[:repository][:base], dir) do
+    directory ::File.join(node['repository']['base'], dir) do
       recursive true
     end
   end
   new_resource.architecture.each do |arch|
-    d = directory ::File.join(node[:repository][:base], 'dists', new_resource.codename, new_resource.component, "binary-#{arch}") do
+    d = directory ::File.join(node['repository']['base'], 'dists', new_resource.codename, new_resource.component, "binary-#{arch}") do
       recursive true
     end
     new_resource.updated_by_last_action(true) if d.updated_by_last_action?
   end
-  directory ::File.join(node[:repository][:base], 'pool', new_resource.codename) do
+  directory ::File.join(node['repository']['base'], 'pool', new_resource.codename) do
     recursive true
   end
 
@@ -60,17 +60,17 @@ action :create do
 end
 
 action :remove do
-  if(::File.exists?(::File.join(node[:repository][:base], 'conf', "#{new_resource.codename}.json")))
-    directory ::File.join(node[:repository][:base], 'dists', new_resource.codename, new_resource.name) do
+  if ::File.exist?(::File.join(node['repository']['base'], 'conf', "#{new_resource.codename}.json"))
+    directory ::File.join(node['repository']['base'], 'dists', new_resource.codename, new_resource.name) do
       action :delete
       recursive true
     end
-    directory ::File.join(node[:repository][:base], 'pool', new_resource.codename) do
+    directory ::File.join(node['repository']['base'], 'pool', new_resource.codename) do
       action :delete
       recursive true
       only_if do
         Dir.new(
-          ::File.join(node[:repository][:base], 'pool', new_resource.codename)
+          ::File.join(node['repository']['base'], 'pool', new_resource.codename)
         ).find_all do |path|
           %w(. ..).include?(path)
         end.empty?
@@ -80,7 +80,7 @@ action :remove do
       action :delete
       only_if do
         Dir.new(
-          ::File.join(node[:repository][:base], 'pool', new_resource.codename)
+          ::File.join(node['repository']['base'], 'pool', new_resource.codename)
         ).find_all do |path|
           %w(. ..).include?(path)
         end.empty?

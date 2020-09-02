@@ -13,9 +13,9 @@ action :build do
   end
   stopper.run_action(:stop)
 
-  conf_file = ::File.join(node[:repository][:base], 'conf', "#{new_resource.codename}.json")  
-  pool_dir = ::File.join(node[:repository][:base], 'pool', new_resource.codename)
-  dist_dir = ::File.join(node[:repository][:base], 'dists', new_resource.codename)
+  conf_file = ::File.join(node['repository']['base'], 'conf', "#{new_resource.codename}.json")
+  pool_dir = ::File.join(node['repository']['base'], 'pool', new_resource.codename)
+  dist_dir = ::File.join(node['repository']['base'], 'dists', new_resource.codename)
 
   config = Mash.new(JSON.load(::File.read(conf_file)))
   processed_archs = []
@@ -39,7 +39,7 @@ action :build do
           ::File.link(deb_file, ::File.join(t_pool_dir, ::File.basename(deb_file)))
         end
         # make package files!
-        if(component_config[:multi_version])
+        if component_config[:multi_version]
           multi = ' -m'
         end
         pack = execute "create Package file for #{new_resource.codename} - #{component} - #{arch}" do
@@ -53,7 +53,7 @@ action :build do
 
       # Make compressed Package
       execute "compress Package file for #{new_resource.codename} - #{component} - #{arch}" do
-        command "gzip -c Packages > Packages.gz"
+        command 'gzip -c Packages > Packages.gz'
         cwd arch_dir
       end
 
@@ -61,13 +61,13 @@ action :build do
       template ::File.join(arch_dir, 'Release') do
         source 'release.erb'
         cookbook 'repository'
-        mode 0644
+        mode '644'
         variables(
-          :component => component,
-          :codename => new_resource.codename,
-          :arch => arch,
-          :label => component_config[:label],
-          :description => component_config[:description]
+          component: component,
+          codename: new_resource.codename,
+          arch: arch,
+          label: component_config[:label],
+          description: component_config[:description]
         )
       end
     end
@@ -77,40 +77,40 @@ action :build do
   template ::File.join(dist_dir, 'Release') do
     source 'release.erb'
     cookbook 'repository'
-    mode 0644
+    mode '644'
     # TODO: Replace files with #lazy for chef11 and add delayed evaluator cookbook
     # for chef10
     variables(
-      :components => config[:components].keys,
-      :codename => new_resource.codename,
-      :archs => processed_archs.uniq,
-      :files => lambda{ RepositoryHelper.generate_checksums(dist_dir) },
-      :label => config[:meta][:label],
-      :description => config[:meta][:description]
+      components: config[:components].keys,
+      codename: new_resource.codename,
+      archs: processed_archs.uniq,
+      files: -> { RepositoryHelper.generate_checksums(dist_dir) },
+      label: config[:meta][:label],
+      description: config[:meta][:description]
     )
     notifies :run, "execute[Release.gpg - #{new_resource.codename}]", :immediately
     notifies :run, "execute[InRelease - #{new_resource.codename}]", :immediately
   end
-  
+
   execute "Release.gpg - #{new_resource.codename}" do
     command "sudo -i gpg -ba #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'Release.gpg')}"
     action :nothing
-    user "root"
-    cwd "/root"
-    environment "GNUPGHOME" => node['repository']['gnupg_home']
+    user 'root'
+    cwd '/root'
+    environment 'GNUPGHOME' => node['repository']['gnupg_home']
     not_if do
-      node[:repository][:do_not_sign]
+      node['repository']['do_not_sign']
     end
   end
 
   execute "InRelease - #{new_resource.codename}" do
     command "sudo -i gpg --clearsign #{::File.join(dist_dir, 'Release')} && mv #{::File.join(dist_dir, 'Release.asc')} #{::File.join(dist_dir, 'InRelease')}"
     action :nothing
-    user "root"
-    cwd "/root"
-    environment "GNUPGHOME" => node['repository']['gnupg_home']
+    user 'root'
+    cwd '/root'
+    environment 'GNUPGHOME' => node['repository']['gnupg_home']
     not_if do
-      node[:repository][:do_not_sign]
+      node['repository']['do_not_sign']
     end
   end
 

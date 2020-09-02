@@ -1,7 +1,7 @@
 default[:repository][:packages] = %w(dpkg-dev debsigs)
 default[:repository][:base] = '/srv/repository'
 default[:repository][:repos] = []
-default[:repository][:incoming][:codename] = node[:lsb][:codename]
+default[:repository][:incoming][:codename] = node['lsb']['codename']
 default[:repository][:incoming][:name] = 'incoming'
 default[:repository][:incoming][:architecture] = 'amd64'
 default[:repository][:incoming][:label] = 'Incoming Repository'
@@ -14,5 +14,5 @@ default[:repository][:data_bag] = 'repository'
 default[:repository][:pgp_data_bag] = false
 default[:repository][:install_local_repos] = []
 default[:repository][:frontend][:listen_port] = 80
-default[:repository][:frontend][:fqdn] = node[:fqdn]
+default[:repository][:frontend][:fqdn] = node['fqdn']
 default[:repository][:do_not_sign] = false
