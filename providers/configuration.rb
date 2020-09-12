@@ -3,13 +3,12 @@ def load_current_resource
 end
 
 action :create do
-
   repository_files new_resource.codename do
     action :nothing
   end
 
-  f = file ::File.join(node[:repository][:base], 'conf', "#{new_resource.codename}.json") do
-    mode 0644
+  f = file ::File.join(node['repository']['base'], 'conf', "#{new_resource.codename}.json") do
+    mode '644'
     content JSON.pretty_generate(node.run_state[:repository_db][new_resource.codename])
     notifies :build, "repository_files[#{new_resource.codename}]", :immediately
   end
@@ -18,8 +17,8 @@ action :create do
 end
 
 action :delete do
-  path = ::File.join(node[:repository][:base], 'conf', "#{new_resource.codename}.json")
-  if(::File.exists?(path))
+  path = ::File.join(node['repository']['base'], 'conf', "#{new_resource.codename}.json")
+  if ::File.exist?(path)
     file path do
       action :delete
     end
