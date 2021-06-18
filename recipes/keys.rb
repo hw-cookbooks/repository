@@ -1,11 +1,7 @@
 if node['repository']['pgp_data_bag']
   pgp_bag = if node['repository']['pgp_data_bag'] == true
-              data_bag_item(node['repository']['data_bag'], 'pgp')
-            else
-              data_bag_item(
-                node['repository']['data_bag'], 'pgp'
-              )
             end
+  data_bag_item(node['repository']['data_bag'], 'pgp')
   raise 'Failed to locate PGP information' unless pgp_bag
   pgp_bag = Mash.new(pgp_bag.raw_data)
   key_path = File.join(node['repository']['base'], "#{pgp_bag[:email]}.gpg.key")
